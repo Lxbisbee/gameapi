@@ -1,0 +1,187 @@
+<div  class="container">	
+<!-- Row 1 Title Row -->
+	<div class="row">
+		<div class="col-sm-3">
+			<h1 class="color-light">My Library</h1>
+		</div>
+		<div class="col-sm-9 color-light">
+			<div style="margin:20px" class="text-right">
+				<span style="margin-right: 8px">Total Resale Value: <strong>{{library.totalRetailValue | currency : "$" : 2}}</strong></span>
+				<span style="margin-right: 8px">|</span>
+				<span style="margin-right: 10px">Total Trade-In Value: <strong>{{library.totalTradeInValue | currency : "$" : 2}}</strong></span>
+			</div>
+		</div>
+	</div>	
+	
+	<hr class="color-light"></hr>
+	
+
+	<div class="container img-rounded background-light" 
+			style="max-width:840px; margin:0 auto 16px auto" 
+			ng-repeat="game in games | orderBy:'name'" 
+			ng-init="index = $index"
+			ng-if="game.location==='LIBRARY'">
+			
+			<button type="button" class="btn btn-link btn-block" style="margin: 8px; font-size: 16px"
+					data-toggle="collapse" data-target="#expand{{index}}"
+					ng-click="initProgress('progress' + index, game.rating)">{{game.name}}
+			</button>
+		
+		<div id="expand{{index}}" class="collapse" style="margin: 32px">	
+			<div class="row">
+				<!-- Cover Image Column -->
+				<div class="col-sm-3">
+					<img style="width: 175px" class="img-rounded" src="{{'http:'+getSizedCoverUrl(game.coverUrl,coverSizes.t_720p)}}"/>
+				</div>
+				
+				<!-- Date, Console, Condition, Rating Column -->
+				<div class="col-sm-6">
+					<!-- if release date is undefined, display "unreleased" text instead -->
+					<div ng-if="game.releaseDate" style="font-size: 16px">Released {{game.releaseDate | date:'MMMM d, y'}}</div>
+					<div ng-if="!game.releaseDate">UNRELEASED</div>
+					
+					<div style="font-size: 16px; margin:0">Console<strong> {{game.console}}</strong>
+						<button type="button" class="btn btn-link btn-xs" ng-click="setGameToUpdate(game)"
+							data-toggle="modal" data-target="#editConsoleModal">Edit</button>
+					</div>	
+									
+					<div style="font-size: 16px; margin:0">Condition<strong> {{game.condition}}</strong>
+						<button type="button" class="btn btn-link btn-xs" ng-click="setGameToUpdate(game)"
+							data-toggle="modal" data-target="#editConditionModal">Edit</button>
+					</div>
+					
+					<!-- if rating is undefined, display "not yet rated" text instead -->
+					<div ng-if="game.rating" style="max-width: 200px" id="{{'progress'+index}}"></div>
+					<div ng-if="!game.rating">NOT YET RATED</div>
+					
+				</div>
+				
+				<!-- Delete Button, Game Pricing Column -->
+				<div class="col-sm-3 text-right">
+					<!-- Delete From Library button -->
+					<p>
+						<button style="width: 100%;" type="button" data-toggle="modal" data-target="#myModal" ng-click="setDeleteId(game.id)" class="btn btn-danger">
+							<span class="glyphicon glyphicon-trash"></span> Delete Game
+						</button>
+					</p>
+					<!-- Game Pricing Info -->
+					<p ng-if="game.condition==='NEW'" class="row text-center">
+						<span><strong>Resale Value({{game.condition}}): {{game.gamePricing.retailNewBuy | currency : "$" : 2}}</strong></span>
+					</p>
+					<p ng-if="game.condition==='CIB'" class="row text-center">
+						<span><strong>Resale Value({{game.condition}}): {{game.gamePricing.retailCibBuy | currency : "$" : 2}}</strong></span>
+					</p>
+					<p ng-if="game.condition==='LOOSE'" class="row text-center">
+						<span><strong>Resale Value({{game.condition}}): {{game.gamePricing.retailLooseBuy | currency : "$" : 2}}</strong></span>
+					</p>
+					<p class="row text-center">
+						<span><strong>GameStop Trade Value: {{game.gamePricing.gameStopTradePrice | currency : "$" : 2}}</strong></span>
+					</p>
+					
+				</div>
+			</div>
+			
+			<br>
+			
+			<!-- Summary -->
+			<div class="row">
+				<div style="text-indent: 40px;" class="col-sm-12">
+					{{game.summary}}
+				</div>
+			</div>
+		</div>	
+	</div>	
+		
+	
+	
+	<!-- Delete Confirmation Modal -->
+	<div id="myModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog modal-sm">
+	
+	   
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h3 class="modal-title">Delete Game</h3>
+	      </div>
+	      <div class="modal-body">
+	        <p><h4>Are you sure you want to delete this game from your library?</h4></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-success" data-dismiss="modal" ng-click="deleteGame()" >Yes</button>
+	        <button type="submit" class="btn btn-danger" data-dismiss="modal">No</button>
+	      </div>
+	    </div>
+	
+	  </div>
+	</div>
+
+	<!-- Edit Console Modal -->
+	<div id="editConsoleModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Edit Console</h4>
+	      </div>
+	      <div class="modal-body">
+	        <!-- Console Selection -->
+	        	<div class="row">
+					<div class="col-sm-8 col-sm-offset-2 text-center">
+						<select name="dropdown" style="margin-left: 4px;" ng-model="update.console" class="form-control">
+							<option value="Playstation 3">PS3</option>
+							<option value="Playstation 4">PS4</option>
+							<option value="Xbox One">XBOX ONE</option>
+							<option value="Xbox 360">XBOX 360</option>
+							<option value="Wii">WII</option>
+							<option value="Wii U">WII U</option>
+							<option value="Nintendo Switch">NINTENDO SWITCH</option>
+						</select>
+					</div>
+				</div>
+	      </div>
+	      <div class="modal-footer">
+	     	<button ng-click="updateGame()" type="button" class="btn btn-success" data-dismiss="modal">Apply</button>
+	        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+	      </div>
+	    </div>
+	
+	  </div>
+	</div>
+	
+	<!-- Edit Condition Modal -->
+	<div id="editConditionModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog">
+	
+	    <!-- Modal content-->
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h4 class="modal-title">Edit Game Condition</h4>
+	      </div>
+	      <div class="modal-body">
+	        <!-- Console Selection -->
+	        	<div class="row">
+					<div class="col-sm-8 col-sm-offset-2 text-center">
+						<select name="dropdown" style="margin-left: 4px;" ng-model="update.condition" class="form-control">
+							<option value="CIB">Complete In Box</option>
+							<option value="LOOSE">Loose</option>
+							<option value="NEW">New</option>
+						</select>
+					</div>
+				</div>
+	      </div>
+	      <div class="modal-footer">
+	     	<button ng-click="updateGame()" type="button" class="btn btn-success" data-dismiss="modal">Apply</button>
+	        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+	      </div>
+	    </div>
+	
+	  </div>
+	</div>
+	
+</div>
+
+						 

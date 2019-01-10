@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+
+<title>Throne of Games</title>
+
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> 
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+
+<script src="js/progress.js"></script>
+
+<script src="js/game.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+
+<script src="js/tc-angular-chartjs.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/angular.chartjs/latest/angular-chart.min.js"></script>
+
+<style>
+	.navbar-nav li a {line-height:25px;}
+	.color-light{color: #efefef;}
+	.background-light{background: #efefef;}
+	.background-dark{background: #303030;}
+	[id^=progress] {
+	  margin: 28px;
+	  width: 100px;
+	  height: 100px;
+	  position: relative;
+	}
+</style>
+
+</head>
+
+<body class="background-dark" ng-app="gameapi" ng-controller="gamecontroller">
+	<nav style="height: 50px" class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container-fluid">
+			<div class="navbar-header bg-secondary">
+				<a style="color:#efefef" class="navbar-brand color-light">
+					<span class="glyphicon glyphicon-knight"></span>
+					{{appName}}
+				</a>
+			</div>
+		
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li><a ng-click="getGames()" href="#!mylibrary"><span class="glyphicon glyphicon-list"></span> My Library</a></li>
+					<li><a href="#!search"><span class="glyphicon glyphicon-search"></span> Search</a></li>
+					<li><a ng-click="getGames()" href="#!wishlist"><span class="glyphicon glyphicon-gift"></span> Wish List</a></li>
+					<li><a ng-click="pieChartData()" href="#!summary"><span class="glyphicon glyphicon-stats"></span> Summary</a></li>
+					<li><a href="#!stack"><span class="glyphicon glyphicon-folder-open"></span>  Stack</a></li>
+				</ul>
+			</div>		
+		</div>
+	</nav>
+	
+	<div style="margin-top: 50px" ng-view></div>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<div class="container">
+	<!--Row1 Title row -->
+	<div class="row">
+		<div class="text-center">
+			<h1 class="color-light">Search for Games</h1>
+		</div>
+	</div>
+	
+	<hr>
+	
+	<!--Row2 search input and console input row -->
+	<div class="row">
+		<div class="col-sm-8 col-sm-offset-2">
+			<div class="row">
+				<form ng-submit="searchIgdb()">
+					<!-- Search input and button -->
+					<div class="col-sm-6">						
+						<div class="input-group">
+							<input type="text" class="form-control" ng-model="search.text">
+							<span class="input-group-btn">
+								<button class="btn btn-success" type="button" ng-click="searchIgdb()">Search</button>
+							</span>
+						</div>										
+					</div>
+					<!-- Console Selection -->
+					<div class="col-sm-3">
+						<select name="dropdown" style="margin-left: 4px;" ng-model="search.console" class="form-control">
+							<option value="Playstation 3">PS3</option>
+							<option value="Playstation 4">PS4</option>
+							<option value="Xbox One">XBOX ONE</option>
+							<option value="Xbox 360">XBOX 360</option>
+							<option value="Wii">WII</option>
+							<option value="Wii U">WII U</option>
+							<option value="Nintendo Switch">NINTENDO SWITCH</option>
+						</select>
+					</div>
+					
+					<!-- Condition Selection -->
+					<div class="col-sm-3">
+						<select name="dropdown" style="margin-left: 4px;" ng-model="search.condition" class="form-control">
+							<option value="CIB">Complete In Box</option>
+							<option value="LOOSE">Loose</option>
+							<option value="NEW">New</option>
+						</select>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	<br>
+	
+	<!--Row4-conditional  if the game object array has anything, show the table -->
+	<div ng-if="igdbSearchResults.length > 0" class="row">
+		<div 	class="container img-rounded background-light" 
+				style="max-width=800px; margin-bottom: 32px; padding: 32px;" 
+				ng-repeat="result in igdbSearchResults" 
+				ng-init="index = $index; initProgress('progress' + index, result.rating)" 
+				ng-if="result.cover.url.length > 2">
+				
+			<div class="row">
+				<!-- Cover Image Column -->
+				<div class="col-sm-3">
+					<img style="width: 175px" class="img-rounded" src="{{'http:' + getSizedCoverUrl(result.cover.url, coverSizes.t_720p)}}"/>
+				</div>
+				
+				<!-- Title, Date, Rating -->
+				<div class="col-sm-6">
+					<p style="font-size: 16px">{{result.name}}</p>
+					<!-- if release date is undefined, display "unreleased" text instead -->
+					<p ng-if="result.release_dates" style="font-size: 16px">Released {{result.release_dates[0].date | date:'MMMM d, y'}}</p>
+					<p ng-if="!result.release_dates">UNRELEASED</p>
+					<!-- if rating is undefined, display "not yet rated" text instead -->
+					<div ng-if="result.rating" style="max-width: 200px" id="{{'progress'+index}}"></div>
+					<div ng-if="!result.rating">NOT YET RATED</div>
+				</div>
+				
+				<!-- User Buttons -->
+				<div class="col-sm-3 text-right">
+					<!-- Add To Library button -->
+					<button style="width: 100%; margin-bottom: 4px" 
+						type="button" class="btn btn-primary"
+       					 ng-click="postGame(result, 'LIBRARY')"
+       					 data-toggle="modal" data-target="#addConfirmationModal">
+						<span class="glyphicon glyphicon-plus-sign"></span> Add to Library
+					</button>
+					<!-- Add To Wish List button -->
+					<button style="width: 100%;" type="button" class="btn btn-info"
+						ng-click="postGame(result, 'WISHLIST')" 
+						data-toggle="modal" data-target="#addWLConfirmationModal">
+						<span class="glyphicon glyphicon-plus-sign"></span> Add to Wish List
+					</button>
+				</div>
+			</div>
+			
+			<br>
+			
+			<!-- Summary -->
+			<div class="row">
+				<div style="text-indent: 40px;" class="col-sm-10">
+					{{result.summary}}
+				</div>
+				<div class="col-sm-2">
+					<div></div>
+				</div>
+			</div>
+		</div>	
+	</div>
+	
+	<!--Row5-conditional  if the game object array is empty AND the search is not running, show no results found message -->
+	<div ng-if="igdbSearchResults.length ==0 && !isSearchRunning" class="row">
+		<strong class="col-xs-12 color-light text-center">No Results Found.</strong>
+	</div>
+	
+	<!--  Add Confirmation Modal -->
+	<div id="addConfirmationModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog modal-sm">
+	
+	   
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h3 class="modal-title">Success!</h3>
+	      </div>
+	      <div class="modal-body">
+	        <p><h4>This game has been successfully added to your library.</h4></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="submit" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	
+	  </div>
+	</div>
+	
+	<!--  Add WL Confirmation Modal -->
+	<div id="addWLConfirmationModal" class="modal fade" role="dialog">
+	  <div class="modal-dialog modal-sm">
+	
+	   
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	        <h3 class="modal-title">Success!</h3>
+	      </div>
+	      <div class="modal-body">
+	        <p><h4>This game has been successfully added to your wish list.</h4></p>
+	      </div>
+	      <div class="modal-footer">
+	        <button type="submit" class="btn btn-default" data-dismiss="modal">Close</button>
+	      </div>
+	    </div>
+	
+	  </div>
+	</div>
+	
+</div>
